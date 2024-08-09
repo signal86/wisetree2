@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 
-int main(void) {
+void fuga() {
 
     InitWindow(800, 800, "wise tree 2");
     ToggleBorderlessWindowed();
@@ -14,7 +14,7 @@ int main(void) {
     const int expanseWidth = screenWidth / 8;
     const int expanseHeight = screenWidth / 15;
 
-    const int random = std::rand() % 2; // 0 = yes, 1 = no
+    const int random = std::rand() % 2; // 0 = yes, 1 = n
 
     // Textures
 
@@ -50,7 +50,25 @@ int main(void) {
         /*if (!IsSoundPlaying(bg)) PlaySound(bg);*/
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            /*if (GetMouseX() )*/
+            if (
+                random == 0 &&
+                GetMouseX() > randWidth - expanseWidth &&
+                GetMouseX() < randWidth - expanseWidth + expanseWidth &&
+                GetMouseY() > randHeight - expanseHeight &&
+                GetMouseY() < randHeight - expanseHeight + expanseHeight
+            ) {
+                break;
+            } else if (
+                random == 1 &&
+                GetMouseX() > randWidth2 - expanseWidth &&
+                GetMouseX() < randWidth2 - expanseWidth + expanseWidth &&
+                GetMouseY() > randHeight2 - expanseHeight &&
+                GetMouseY() < randHeight2 - expanseHeight + expanseHeight
+            ) {
+                break;
+            } else {
+                PlaySound(scream);
+            }
         }
 
         BeginDrawing();
@@ -80,5 +98,4 @@ int main(void) {
 
     CloseWindow();
 
-    return 0;
 }
