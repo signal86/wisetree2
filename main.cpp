@@ -25,7 +25,7 @@ void draw(int random, int randWidth, int randHeight, int randWidth2, int randHei
     const int expanseWidth = screenWidth / 8;
     const int expanseHeight = screenWidth / 15;
 
-    /*if (!IsSoundPlaying(bg)) PlaySound(bg);*/
+    if (!IsSoundPlaying(bg)) PlaySound(bg);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         if (
