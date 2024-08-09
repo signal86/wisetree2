@@ -2,8 +2,73 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
-void fuga() {
+bool opened = true;
+
+void draw(int randWidth, int randHeight, int randWidth2, int randHeight2) {
+
+    /*if (!IsSoundPlaying(bg)) PlaySound(bg);*/
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (
+            random == 0 &&
+            GetMouseX() > randWidth - expanseWidth &&
+            GetMouseX() < randWidth - expanseWidth + expanseWidth &&
+            GetMouseY() > randHeight - expanseHeight &&
+            GetMouseY() < randHeight - expanseHeight + expanseHeight
+        ) {
+            closed = false;
+            return;
+        } else if (
+            random == 1 &&
+            GetMouseX() > randWidth2 - expanseWidth &&
+            GetMouseX() < randWidth2 - expanseWidth + expanseWidth &&
+            GetMouseY() > randHeight2 - expanseHeight &&
+            GetMouseY() < randHeight2 - expanseHeight + expanseHeight
+        ) {
+            closed = false;
+            return;
+        } else {
+            PlaySound(scream);
+        }
+    }
+
+    BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        DrawTexture(texture, 0, 0, WHITE);
+
+        DrawRectangle(randWidth - expanseWidth, randHeight - expanseHeight, expanseWidth, expanseHeight, LIME);
+        DrawText("Yes", (randWidth - expanseWidth) + (expanseWidth / 2) - (MeasureText("Yes", 40) / 2), (randHeight - expanseHeight) + (expanseHeight / 2.5), 40, BLACK);
+        DrawRectangle(randWidth2 - expanseWidth, randHeight2 - expanseHeight, expanseWidth, expanseHeight, RED);
+        DrawText("No", (randWidth2 - expanseWidth) + (expanseWidth / 2) - (MeasureText("No", 40) / 2), (randHeight2 - expanseHeight) + (expanseHeight / 2.5), 40, BLACK);
+
+        DrawRectangle(screenWidth / 2 - (expanseWidth * 2), expanseHeight, expanseWidth * 4, expanseHeight * 2, LIGHTGRAY);
+        DrawText("Are you still playing?", screenWidth / 2 - (MeasureText("Are you still playing?", 60) / 2), expanseHeight * 2, 60, BLACK);
+
+    EndDrawing();
+
+    if (WindowShouldClose()) closed = false;
+
+}
+
+int main() {
+
+    /*fuga();*/
+    /*#ifdef _WIN32*/
+    /*Sleep(3000);*/
+    /*#else*/
+    /*sleep(3);*/
+    /*#endif*/
+    /*ClearWindowState(FLAG_WINDOW_HIDDEN);*/
+
+    std::srand(std::time(nullptr));
 
     InitWindow(800, 800, "wise tree 2");
     ToggleBorderlessWindowed();
@@ -17,12 +82,6 @@ void fuga() {
     const int random = std::rand() % 2; // 0 = yes, 1 = n
 
     // Textures
-
-    std::srand(std::time(nullptr));
-    const int randWidth = expanseWidth + (std::rand() % ((screenWidth / 2) - expanseWidth));
-    const int randHeight = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
-    const int randWidth2 = (screenWidth / 2) + (std::rand() % ((screenWidth / 2) - expanseWidth));
-    const int randHeight2 = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
 
     Image image = LoadImage("cokey.png"); 
     ImageResize(&image, screenWidth, screenHeight);
@@ -44,48 +103,14 @@ void fuga() {
 
     SetTargetFPS(60);
 
-    while (!WindowShouldClose())
-    {
+    while (!WindowShouldClose()) {
 
-        /*if (!IsSoundPlaying(bg)) PlaySound(bg);*/
+        int randWidth = expanseWidth + (std::rand() % ((screenWidth / 2) - expanseWidth));
+        int randHeight = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
+        int randWidth2 = (screenWidth / 2) + (std::rand() % ((screenWidth / 2) - expanseWidth));
+        int randHeight2 = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (
-                random == 0 &&
-                GetMouseX() > randWidth - expanseWidth &&
-                GetMouseX() < randWidth - expanseWidth + expanseWidth &&
-                GetMouseY() > randHeight - expanseHeight &&
-                GetMouseY() < randHeight - expanseHeight + expanseHeight
-            ) {
-                break;
-            } else if (
-                random == 1 &&
-                GetMouseX() > randWidth2 - expanseWidth &&
-                GetMouseX() < randWidth2 - expanseWidth + expanseWidth &&
-                GetMouseY() > randHeight2 - expanseHeight &&
-                GetMouseY() < randHeight2 - expanseHeight + expanseHeight
-            ) {
-                break;
-            } else {
-                PlaySound(scream);
-            }
-        }
-
-        BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-
-            DrawTexture(texture, 0, 0, WHITE);
-
-            DrawRectangle(randWidth - expanseWidth, randHeight - expanseHeight, expanseWidth, expanseHeight, LIME);
-            DrawText("Yes", (randWidth - expanseWidth) + (expanseWidth / 2) - (MeasureText("Yes", 40) / 2), (randHeight - expanseHeight) + (expanseHeight / 2.5), 40, BLACK);
-            DrawRectangle(randWidth2 - expanseWidth, randHeight2 - expanseHeight, expanseWidth, expanseHeight, RED);
-            DrawText("No", (randWidth2 - expanseWidth) + (expanseWidth / 2) - (MeasureText("No", 40) / 2), (randHeight2 - expanseHeight) + (expanseHeight / 2.5), 40, BLACK);
-
-            DrawRectangle(screenWidth / 2 - (expanseWidth * 2), expanseHeight, expanseWidth * 4, expanseHeight * 2, LIGHTGRAY);
-            DrawText("Are you still playing?", screenWidth / 2 - (MeasureText("Are you still playing?", 60) / 2), expanseHeight * 2, 60, BLACK);
-
-        EndDrawing();
+        while (opened) draw(randWidth, randHeight, randWidth2, randHeight2);
 
     }
 
@@ -96,6 +121,7 @@ void fuga() {
 
     CloseAudioDevice();
 
-    CloseWindow();
+
+    return 0;
 
 }
