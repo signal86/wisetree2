@@ -139,10 +139,11 @@ int main() {
             SetWindowState(FLAG_WINDOW_HIDDEN);
         }
 
+        int timer = (std::rand() % 61) + 30;
         #ifdef _WIN32
-        Sleep(3000);
+        Sleep(timer * 1000);
         #else
-        sleep(3);
+        sleep(timer);
         #endif
 
         ClearWindowState(FLAG_WINDOW_HIDDEN);
