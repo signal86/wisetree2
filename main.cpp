@@ -1,3 +1,9 @@
+
+
+// Most hideous codebase oat
+// lesson: why to plan out something before just doing it
+
+
 #include "raylib.h"
 #include <iostream>
 #include <ctime>
@@ -9,12 +15,19 @@
 #endif
 
 bool opened = true;
+int frame = 0;
 
-void draw(int randWidth, int randHeight, int randWidth2, int randHeight2) {
+void draw(int random, int randWidth, int randHeight, int randWidth2, int randHeight2, Texture2D &texture, Sound &bg, Sound &scream) {
+
+    const int screenWidth = GetMonitorWidth(GetCurrentMonitor());
+    const int screenHeight = GetMonitorHeight(GetCurrentMonitor());
+      
+    const int expanseWidth = screenWidth / 8;
+    const int expanseHeight = screenWidth / 15;
 
     /*if (!IsSoundPlaying(bg)) PlaySound(bg);*/
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         if (
             random == 0 &&
             GetMouseX() > randWidth - expanseWidth &&
@@ -22,19 +35,23 @@ void draw(int randWidth, int randHeight, int randWidth2, int randHeight2) {
             GetMouseY() > randHeight - expanseHeight &&
             GetMouseY() < randHeight - expanseHeight + expanseHeight
         ) {
-            closed = false;
+            opened = false;
             return;
-        } else if (
+        }
+        else if (
             random == 1 &&
             GetMouseX() > randWidth2 - expanseWidth &&
             GetMouseX() < randWidth2 - expanseWidth + expanseWidth &&
             GetMouseY() > randHeight2 - expanseHeight &&
             GetMouseY() < randHeight2 - expanseHeight + expanseHeight
         ) {
-            closed = false;
+            opened = false;
             return;
-        } else {
-            PlaySound(scream);
+        }
+        else {
+            if (frame != 0) {
+                PlaySound(scream);
+            }
         }
     }
 
@@ -54,7 +71,9 @@ void draw(int randWidth, int randHeight, int randWidth2, int randHeight2) {
 
     EndDrawing();
 
-    if (WindowShouldClose()) closed = false;
+    if (WindowShouldClose()) opened = false;
+
+    frame++;
 
 }
 
@@ -71,15 +90,12 @@ int main() {
     std::srand(std::time(nullptr));
 
     InitWindow(800, 800, "wise tree 2");
-    ToggleBorderlessWindowed();
 
     const int screenWidth = GetMonitorWidth(GetCurrentMonitor());
     const int screenHeight = GetMonitorHeight(GetCurrentMonitor());
       
     const int expanseWidth = screenWidth / 8;
     const int expanseHeight = screenWidth / 15;
-
-    const int random = std::rand() % 2; // 0 = yes, 1 = n
 
     // Textures
 
@@ -109,8 +125,30 @@ int main() {
         int randHeight = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
         int randWidth2 = (screenWidth / 2) + (std::rand() % ((screenWidth / 2) - expanseWidth));
         int randHeight2 = (screenHeight / 2) + std::rand() % (screenHeight / 2 - expanseHeight);
+        int random = std::rand() % 2; // 0 = yes, 1 = n
 
-        while (opened) draw(randWidth, randHeight, randWidth2, randHeight2);
+        ToggleBorderlessWindowed();
+        while (opened) draw(random, randWidth, randHeight, randWidth2, randHeight2, texture, bg, scream);
+        ToggleBorderlessWindowed();
+
+        StopSound(bg);
+        StopSound(scream);
+
+        if (!IsWindowHidden()) {
+            ClearWindowState(FLAG_WINDOW_TOPMOST);
+            SetWindowState(FLAG_WINDOW_HIDDEN);
+        }
+
+        #ifdef _WIN32
+        Sleep(3000);
+        #else
+        sleep(3);
+        #endif
+
+        ClearWindowState(FLAG_WINDOW_HIDDEN);
+        SetWindowState(FLAG_WINDOW_TOPMOST);
+        opened = true;
+        frame = 0;
 
     }
 
@@ -121,6 +159,7 @@ int main() {
 
     CloseAudioDevice();
 
+    CloseWindow();
 
     return 0;
 
