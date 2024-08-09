@@ -9,7 +9,7 @@
 #include <ctime>
 #include <cstdlib>
 #ifdef _WIN32
-#include <Windows.h>
+#include <stdlib.h>
 #else
 #include <unistd.h>
 #endif
@@ -141,7 +141,7 @@ int main() {
 
         int timer = (std::rand() % 61) + 30;
         #ifdef _WIN32
-        Sleep(timer * 1000);
+        _sleep(timer * 1000);
         #else
         sleep(timer);
         #endif
